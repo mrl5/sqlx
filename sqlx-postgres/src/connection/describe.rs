@@ -452,13 +452,13 @@ WHERE rngtypid = $1
         let mut nullables = Vec::new();
 
         if let Explain::QueryPlan(
-            query_plan @ QueryPlan {
+            _query_plan @ QueryPlan {
                 plan,
                 ..
             },
         ) = &explain
         {
-            if let Some(outputs) = &query_plan.plan.output {
+            if let Some(outputs) = &plan.output {
                 nullables.resize(outputs.len(), None);
                 visit_plan(&plan, outputs, &mut nullables);
             }
