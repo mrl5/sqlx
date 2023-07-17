@@ -495,13 +495,19 @@ fn visit_plan(plan: &Plan, outputs: &[String], nullables: &mut Vec<Option<bool>>
 #[derive(serde::Deserialize)]
 enum Explain {
     /// {"Plan": ...} -- returned for most statements
-    Plan(Plan),
+    Plan(PlanExt),
     /// The string "Utility Statement" -- returned for
     /// a CALL statement
     #[serde(rename = "Utility Statement")]
     UtilityStatement,
-    #[serde(rename = "Query Identifier")]
-    QueryIdentifier(usize),
+}
+
+#[derive(serde::Deserialize)]
+struct PlanExt {
+    #[serde(rename = "Plan", skip)]
+    plan: Plan,
+    #[serde(rename = "Query Identifier", skip)]
+    query_identifier: Option<u64>,
 }
 
 #[derive(serde::Deserialize)]
