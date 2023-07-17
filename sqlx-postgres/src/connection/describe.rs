@@ -500,10 +500,8 @@ enum Explain {
     /// a CALL statement
     #[serde(rename = "Utility Statement")]
     UtilityStatement,
-    //#[serde(rename = "Query Identifier")]
-    //QueryIdentifier,
-    /// Ignore additional fields
-    IgnoredAny
+    #[serde(rename = "Query Identifier", skip)]
+    QueryIdentifier(Option<u64>),
 }
 
 #[derive(serde::Deserialize)]
