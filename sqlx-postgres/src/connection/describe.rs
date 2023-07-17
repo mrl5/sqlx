@@ -494,6 +494,7 @@ fn visit_plan(plan: &Plan, outputs: &[String], nullables: &mut Vec<Option<bool>>
 }
 
 #[derive(serde::Deserialize)]
+#[serde(untagged)]
 enum Explain {
     /// {"Plan": ...} -- returned for most statements
     QueryPlan(QueryPlan),
