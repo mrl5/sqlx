@@ -12,6 +12,7 @@ use crate::{PgArguments, PgColumn, PgConnection, PgTypeInfo};
 use futures_core::future::BoxFuture;
 use std::fmt::Write;
 use std::sync::Arc;
+use serde::de::IgnoredAny;
 
 /// Describes the type of the `pg_type.typtype` column
 ///
@@ -502,7 +503,7 @@ enum Explain {
     //#[serde(rename = "Query Identifier")]
     //QueryIdentifier,
     /// Ignore additional fields
-    IgnoredAny(serde::de::IgnoredAny)
+    IgnoredAny
 }
 
 #[derive(serde::Deserialize)]
