@@ -501,7 +501,7 @@ enum Explain {
     #[serde(rename = "Utility Statement")]
     UtilityStatement,
     #[serde(rename = "Query Identifier")]
-    QueryIdentifier(Option<u64>),
+    QueryIdentifier(usize),
 }
 
 #[derive(serde::Deserialize)]
