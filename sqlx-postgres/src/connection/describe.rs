@@ -12,7 +12,6 @@ use crate::{PgArguments, PgColumn, PgConnection, PgTypeInfo};
 use futures_core::future::BoxFuture;
 use std::fmt::Write;
 use std::sync::Arc;
-use serde::de::IgnoredAny;
 
 /// Describes the type of the `pg_type.typtype` column
 ///
@@ -452,15 +451,17 @@ WHERE rngtypid = $1
 
         let mut nullables = Vec::new();
 
-        if let Explain::Plan(
-            plan @ Plan {
-                output: Some(outputs),
+        if let Explain::QueryPlan(
+            query_plan @ QueryPlan {
+                plan,
                 ..
             },
         ) = &explain
         {
-            nullables.resize(outputs.len(), None);
-            visit_plan(&plan, outputs, &mut nullables);
+            if let Some(outputs) = &query_plan.plan.output {
+                nullables.resize(outputs.len(), None);
+                visit_plan(&plan, outputs, &mut nullables);
+            }
         }
 
         Ok(nullables)
@@ -495,7 +496,7 @@ fn visit_plan(plan: &Plan, outputs: &[String], nullables: &mut Vec<Option<bool>>
 #[derive(serde::Deserialize)]
 enum Explain {
     /// {"Plan": ...} -- returned for most statements
-    Plan(Plan),
+    QueryPlan(QueryPlan),
     /// The string "Utility Statement" -- returned for
     /// a CALL statement
     #[serde(rename = "Utility Statement")]
@@ -503,15 +504,15 @@ enum Explain {
 }
 
 #[derive(serde::Deserialize)]
-struct Plan {
-    #[serde(rename = "Plan", skip)]
-    plan: QueryPlan,
+struct QueryPlan {
+    #[serde(rename = "Plan")]
+    plan: Plan,
     #[serde(rename = "Query Identifier", skip)]
     query_identifier: Option<u64>,
 }
 
 #[derive(serde::Deserialize)]
-struct QueryPlan {
+struct Plan {
     #[serde(rename = "Join Type")]
     join_type: Option<String>,
     #[serde(rename = "Parent Relationship")]
