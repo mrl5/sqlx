@@ -500,7 +500,7 @@ enum Explain {
     /// a CALL statement
     #[serde(rename = "Utility Statement")]
     UtilityStatement,
-    #[serde(rename = "Query Identifier", skip)]
+    #[serde(rename = "Query Identifier")]
     QueryIdentifier(Option<u64>),
 }
 
